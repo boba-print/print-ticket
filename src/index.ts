@@ -61,3 +61,8 @@ export enum PaperSize {
   Legal = "Legal",
   Executive = "Executive",
 }
+
+export enum FileOrientation {
+  Portrait = "PORTRAIT",
+  Landscape = "LANDSCAPE",
+}
