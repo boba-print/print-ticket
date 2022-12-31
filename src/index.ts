@@ -66,3 +66,65 @@ export enum FileOrientation {
   Portrait = "PORTRAIT",
   Landscape = "LANDSCAPE",
 }
+
+export class Mapper {
+  static mapFromProps(
+    layoutOrder: LayoutOrder,
+    nUp: number,
+    copies: number,
+    duplex: Duplex,
+    pageFitting: PageFitting,
+    isColor: boolean,
+    pageRangeString: string,
+    paperOrientation: PaperOrientation
+  ): PrintTicket {
+    return {
+      version: "v2.0",
+      layout: {
+        order: LayoutOrder[layoutOrder],
+        nUp: this.nUpToEnum(nUp),
+      },
+      copies,
+      duplex: Duplex[duplex],
+      fitToPage: PageFitting[pageFitting],
+      isColor: isColor,
+      pageRanges: this.formatPageRanges(pageRangeString),
+      paperOrientation: PaperOrientation[paperOrientation],
+      paperSize: PaperSize.A4,
+    };
+  }
+
+  private static nUpToEnum(nUp: number) {
+    switch (nUp) {
+      case 1:
+        return NUp.One;
+      case 2:
+        return NUp.Two;
+      case 4:
+        return NUp.Four;
+      case 6:
+        return NUp.Six;
+      case 8:
+        return NUp.Eight;
+      case 9:
+        return NUp.Nine;
+      default:
+        return NUp.One;
+    }
+  }
+
+  private static formatPageRanges(ranges: string): PageRange[] {
+    if (ranges.length === 0) {
+      return [];
+    }
+    return ranges.split(",").map(this.toRange);
+  }
+
+  private static toRange(range: string): PageRange {
+    if (/^[0-9]+-[0-9]+$/.test(range)) {
+      const pages = range.split("-");
+      return { start: Number(pages[0]), end: Number(pages[1]) };
+    }
+    return { start: Number(range), end: Number(range) };
+  }
+}
